@@ -32,9 +32,9 @@ def click(posx, posy):
     sleep(.05)
     pyautogui.moveTo(posx, posy, duration=.0)
     sleep(.05)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0 ,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
     sleep(.05)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0 ,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 def testabort(hnd):
     if hnd != win32gui.GetForegroundWindow():
