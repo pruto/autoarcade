@@ -40,7 +40,7 @@ def click(posx, posy):
 
 def testabort(hnd):
     if hnd != win32gui.GetForegroundWindow():
-        exit()
+        sys.exit()
 
 def main():
     # 获取窗口并挪到前台
