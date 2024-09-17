@@ -1,9 +1,11 @@
-import win32gui
 import pyautogui
 import numpy
 import cv2
+import sys
+import win32gui
 import win32api
 import win32con
+import win32com.client
 from time import sleep
 from math import floor
 
@@ -41,9 +43,15 @@ def testabort(hnd):
         exit()
 
 def main():
+    # 获取窗口并挪到前台
     hnd = win32gui.FindWindow(None, '地下城与勇士：创新世纪')
+    win32gui.ShowWindow(hnd, win32con.SW_NORMAL)
+    win32gui.BringWindowToTop(hnd)
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shell.SendKeys('%')
     win32gui.SetForegroundWindow(hnd)
 
+    # 位置相关常量
     winleft, wintop, winright, winbottom = win32gui.GetWindowRect(hnd)
     winw = winright-winleft
     winh = winbottom-wintop
@@ -56,26 +64,23 @@ def main():
     pendcx = int(wincx-259)
     pendcy = int(wincy+191)
 
-    pyautogui.moveTo(x=jigsawcx, y=jigsawcy)
-
     # 生成192个拼图块参考图列表
     refli = []
-    imgrefer = cv2.imread('refer.png')
+    imgrefer = cv2.imread(sys.path[0]+'/refer.png')
     for i in range(192):
-        refpce = imgrefer[floor(i/16)*30+13:floor(i/16)*30+17, i%16*40+18:i%16*40+22, :]
+        refpce = imgrefer[floor(i/16)*pieceh+13:floor(i/16)*pieceh+17, i%16*piecew+18:i%16*piecew+22, :]
         refli.append(refpce)
 
     # 循环截图对比放置拼图
     while True:
         sleep(.15)
-        simli = []
         cellx = -1
         celly = -1
         pendpce = pyautogui.screenshot(region=[int(pendcx-.5*piecew+18), int(pendcy-.5*pieceh+13), 4, 4])
         pendpce = cv2.cvtColor(numpy.asarray(pendpce), cv2.COLOR_RGB2BGR)
         for i in range(192):
             simval = compimg(pendpce, refli[i])
-            if (simval == 1):
+            if simval == 1:
                 cellx = i%16
                 celly = floor(i/16)
                 break
